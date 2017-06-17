@@ -1,0 +1,2 @@
+# betabrain
+Mastermind in Python
