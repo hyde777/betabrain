@@ -5,6 +5,12 @@ from tkinter.messagebox import showinfo
 def alert():
     showinfo("alerte", "Test!")
 
+def switch_color(event):
+    switch_dic_color = {"red" : "green", "green" : "black", "black" : "yellow2", "yellow2" : "white", "white" : "red"}
+    widget = event.widget
+    widget.configure(bg=switch_dic_color[widget['bg']])
+
+
 def init_menu(fenetre):
     menubar = Menu(fenetre)
 
@@ -27,22 +33,33 @@ def init_menu(fenetre):
 
     fenetre.config(menu=menubar)
 
-def frame_of_tryout(fenetre):
+def frame_of_validation(fenetre):
     tryout_frame = Frame(fenetre, borderwidth=2, relief=GROOVE)
+    starterColor = ['yellow2','white','green','red','black']
+    color_btn = []
+
+    for i in range(len(starterColor)):
+        thisButton = Button(tryout_frame, padx=10, pady=2, bg=starterColor[i])
+        thisButton.bind('<Button>', switch_color)
+        thisButton.grid(row=0, column=i)
+        color_btn.append(thisButton)
+
+    validate = Button(tryout_frame, text="Valide", command=lambda: validate_pattern(color_btn))
+    validate.grid(row=0, column=7)
     tryout_frame.pack(side="top", padx=30, pady=30)
-    #ajouter un stackpanel pouvoir empiler les essai
 
-
-def init_dico_color():
-    dic_color = {"R" : "red", "G" : "green", "B" : "black", "W" : "white", "Y" : "yellow"}
-    base_colors = "RGBWY"
+def validate_pattern( pattern):
+    stringPattern = ''.join([widget['bg'][0] for widget in pattern])
+    showinfo("alerte", stringPattern)
 
 def init_IHM():
     fenetre = Tk()
+    fenetre.title = "MasterMind"
     fenetre["bg"] = "white"
 
     init_menu(fenetre)
-    frame_of_tryout(fenetre)
+
+    frame_of_validation(fenetre)
     label = Label(fenetre, text="Hello World")
     label.pack()
 
