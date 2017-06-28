@@ -53,20 +53,20 @@ def frame_of_failure(fenetre):
         his_peg_frame = Frame(a_failure_frame, padx=10, pady=10)
         his_peg_frame.pack()
         for black_peg in range(tryout[1][0]):
-            circle = Canvas(his_peg_frame, width=5, height=5)
+            circle = Canvas(his_peg_frame, width=10, height=10)
+            circle.create_oval(2, 10, 10, 2, fill='black', outline='white')
             circle.pack()
-            circle.create_oval(0, 10, 10, 0, fill='black')
         for white_peg in range(tryout[1][1]):
-            circle = Canvas(his_peg_frame, width=5, height=5)
+            circle = Canvas(his_peg_frame, width=10, height=10)
+            circle.create_oval(2, 10, 10, 2, fill='white')
             circle.pack()
-            circle.create_oval(0, 10, 10, 0, fill='white')
 
     failure_frame.pack()
 
 
 def frame_of_validation(fenetre):
     full_frame = Frame(fenetre, borderwidth=2, relief=GROOVE, width=200, height=200)
-    button_frame = LabelFrame(full_frame,text='Combinaisons', borderwidth=2, relief=GROOVE)
+    button_frame = LabelFrame(full_frame,text='Combinaisons', padx=10, pady=10, borderwidth=2, relief=GROOVE)
     color_btn = []
 
     for i in range(number_of_case):

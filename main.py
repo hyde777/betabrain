@@ -1,3 +1,3 @@
-from IHM.tkinter_hello_world import *
+from IHM.tkinter_IHM import *
 
 init_IHM()
