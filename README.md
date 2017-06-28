@@ -13,7 +13,7 @@ and a working solver.
 
 ## Tests
 Unit tests are done using the vanilla [`unittest` module](https://docs.python.org/3/library/unittest.html). You
-can execute them by doing a
+can execute them on a module bases (`cd <module>`) by doing a
 ```
 python -m unittest tests/*.py
 ```
