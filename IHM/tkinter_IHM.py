@@ -6,7 +6,7 @@ starter_color = ['yellow2', 'white', 'green', 'red', 'black']
 correspond = {color[0].upper(): color for color in starter_color}
 
 #peg noir | blanc
-#history = [(['Y','W','G','R','B'],(1,2))]
+tries = list()
 solution = []
 
 def alert():
@@ -58,33 +58,37 @@ def frame_of_failure(fenetre):
     for tryout in tries:
         frame_of_static_combinaison(failure_frame, tryout)
     failure_frame.pack()
+    return failure_frame
 
-def frame_of_validation(fenetre):
+def frame_of_validation(fenetre, failure_frame):
     full_frame = Frame(fenetre, borderwidth=2, relief=GROOVE, width=200, height=200)
     button_frame = LabelFrame(full_frame,text='Combinaisons', padx=10, pady=10, borderwidth=2, relief=GROOVE)
     color_btn = []
 
     for i in range(number_of_case):
         counter = i
+        # if we give to many color
         if(i > len(starter_color)):
             counter = i // len(starter_color)
 
-        thisButton = Button(button_frame, padx=10, pady=2, bg=starter_color[i])
+        thisButton = Button(button_frame, padx=10, pady=2, bg=starter_color[counter])
         thisButton.bind('<Button>', switch_color)
         thisButton.pack(fill=Y,side=LEFT)
         color_btn.append(thisButton)
 
-    validate = Button(full_frame, text="Valide", command=lambda: validate_pattern(color_btn, fenetre))
+    validate = Button(full_frame, text="Valide", command=lambda: validate_pattern(color_btn, failure_frame, fenetre))
 
     validate.pack(side=BOTTOM, padx=30, pady=10)
     button_frame.pack(side=TOP, padx=30, pady=5)
     full_frame.pack()
 
-def validate_pattern(pattern, fenetre):
+def validate_pattern(pattern, failure_frame, fenetre):
     stringPattern = ([widget['bg'][0].upper() for widget in pattern])
     #tries come from betabrain
-    result = check(stringPattern, solution)
-    fenetre.after_idle(frame_of_static_combinaison)
+    check(stringPattern, solution, tries)
+    fenetre.update()
+
+
 
 def init_IHM():
     fenetre = Tk()
@@ -97,7 +101,7 @@ def init_IHM():
     global solution
     solution = [c for c in generateProblem()]
 
-    frame_of_failure(fenetre)
-    frame_of_validation(fenetre)
+    fail_frame = frame_of_failure(fenetre)
+    frame_of_validation(fenetre, fail_frame)
 
     fenetre.mainloop()
