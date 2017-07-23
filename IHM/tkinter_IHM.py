@@ -1,12 +1,13 @@
 from tkinter import *
 from tkinter.messagebox import showinfo
+from game.betabrain import *
 
 starter_color = ['yellow2', 'white', 'green', 'red', 'black']
 correspond = {color[0].upper(): color for color in starter_color}
 
-number_of_case = 5
 #peg noir | blanc
-history = [(['Y','W','G','R','B'],(1,2))]
+#history = [(['Y','W','G','R','B'],(1,2))]
+solution = []
 
 def alert():
     showinfo("alerte", "Test!")
@@ -21,17 +22,11 @@ def init_menu(fenetre):
     menubar = Menu(fenetre)
 
     menu1 = Menu(menubar, tearoff=0)
-    menu1.add_command(label="Créer", command=alert)
-    menu1.add_command(label="Editer", command=alert)
+    menu1.add_command(label="Commencer une partie", command=alert)
     menu1.add_separator()
     menu1.add_command(label="Quitter", command=fenetre.quit)
     menubar.add_cascade(label="Fichier", menu=menu1)
 
-    menu2 = Menu(menubar, tearoff=0)
-    menu2.add_command(label="Couper", command=alert)
-    menu2.add_command(label="Copier", command=alert)
-    menu2.add_command(label="Coller", command=alert)
-    menubar.add_cascade(label="Editer", menu=menu2)
 
     menu3 = Menu(menubar, tearoff=0)
     menu3.add_command(label="A propos", command=alert)
@@ -39,30 +34,30 @@ def init_menu(fenetre):
 
     fenetre.config(menu=menubar)
 
+def frame_of_static_combinaison(fenetre, combinaison):
+    a_failure_frame = Frame(fenetre, padx=20, pady=5)
+    for char in combinaison[0]:
+        square = Canvas(a_failure_frame, width=20, height=20)
+        square.pack(side=LEFT)
+        square.create_rectangle(0, 50, 50, 0, fill=correspond[char])
+    a_failure_frame.pack()
+
+    his_peg_frame = Frame(a_failure_frame, padx=10, pady=10)
+    his_peg_frame.pack()
+    for black_peg in range(combinaison[1][0]):
+        circle = Canvas(his_peg_frame, width=10, height=10)
+        circle.create_oval(2, 10, 10, 2, fill='black', outline='white')
+        circle.pack()
+    for white_peg in range(combinaison[1][1]):
+        circle = Canvas(his_peg_frame, width=10, height=10)
+        circle.create_oval(2, 10, 10, 2, fill='white')
+        circle.pack()
+
 def frame_of_failure(fenetre):
     failure_frame = LabelFrame(fenetre, text='Combinaisons ratée', borderwidth=2, width=300, height=200, relief=GROOVE)
-
-    for tryout in history:
-        a_failure_frame = Frame(failure_frame, padx=20, pady=5)
-        for char in tryout[0]:
-            square = Canvas(a_failure_frame, width=20, height=20)
-            square.pack(side=LEFT)
-            square.create_rectangle(0, 50, 50, 0, fill=correspond[char])
-        a_failure_frame.pack()
-
-        his_peg_frame = Frame(a_failure_frame, padx=10, pady=10)
-        his_peg_frame.pack()
-        for black_peg in range(tryout[1][0]):
-            circle = Canvas(his_peg_frame, width=10, height=10)
-            circle.create_oval(2, 10, 10, 2, fill='black', outline='white')
-            circle.pack()
-        for white_peg in range(tryout[1][1]):
-            circle = Canvas(his_peg_frame, width=10, height=10)
-            circle.create_oval(2, 10, 10, 2, fill='white')
-            circle.pack()
-
+    for tryout in tries:
+        frame_of_static_combinaison(failure_frame, tryout)
     failure_frame.pack()
-
 
 def frame_of_validation(fenetre):
     full_frame = Frame(fenetre, borderwidth=2, relief=GROOVE, width=200, height=200)
@@ -79,16 +74,17 @@ def frame_of_validation(fenetre):
         thisButton.pack(fill=Y,side=LEFT)
         color_btn.append(thisButton)
 
-    validate = Button(full_frame, text="Valide", command=lambda: validate_pattern(color_btn))
+    validate = Button(full_frame, text="Valide", command=lambda: validate_pattern(color_btn, fenetre))
 
     validate.pack(side=BOTTOM, padx=30, pady=10)
     button_frame.pack(side=TOP, padx=30, pady=5)
     full_frame.pack()
 
-
-def validate_pattern(pattern):
+def validate_pattern(pattern, fenetre):
     stringPattern = ([widget['bg'][0].upper() for widget in pattern])
-    showinfo("alerte", stringPattern)
+    #tries come from betabrain
+    result = check(stringPattern, solution)
+    fenetre.after_idle(frame_of_static_combinaison)
 
 def init_IHM():
     fenetre = Tk()
@@ -97,6 +93,9 @@ def init_IHM():
     fenetre.maxsize(1000, 400)
     fenetre.minsize(400, 300)
     init_menu(fenetre)
+
+    global solution
+    solution = [c for c in generateProblem()]
 
     frame_of_failure(fenetre)
     frame_of_validation(fenetre)
